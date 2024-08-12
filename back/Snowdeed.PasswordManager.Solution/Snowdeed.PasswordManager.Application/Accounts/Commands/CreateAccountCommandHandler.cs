@@ -17,6 +17,6 @@ public class CreateAccountCommandHandler(PasswordManagerDbContext dbContext) : I
             EmailContact = request.EmailContact
         };
 
-        await _dbContext.Account.AddAsync(account);
+        await _dbContext.Account.AddAsync(account, cancellationToken);
     }
 }

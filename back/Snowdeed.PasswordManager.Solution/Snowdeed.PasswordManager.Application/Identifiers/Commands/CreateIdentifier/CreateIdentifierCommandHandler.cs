@@ -20,6 +20,6 @@ public class CreateIdentifierCommandHandler(PasswordManagerDbContext dbContext) 
             CreatedDate = DateTime.UtcNow
         };
 
-        await _dbContext.Identifier.AddAsync(identifier);
+        await _dbContext.Identifier.AddAsync(identifier, cancellationToken);
     }
 }

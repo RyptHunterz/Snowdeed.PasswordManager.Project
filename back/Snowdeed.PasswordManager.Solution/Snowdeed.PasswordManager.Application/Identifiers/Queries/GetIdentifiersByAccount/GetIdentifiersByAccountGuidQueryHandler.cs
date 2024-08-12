@@ -9,7 +9,7 @@ public class GetIdentifiersByAccountGuidQueryHandler(PasswordManagerDbContext db
 
     public async Task<IEnumerable<IdentifierLiteResponse>> Handle(GetIdentifiersByAccountGuidQuery request, CancellationToken cancellationToken)
     {
-        return (await _dbContext.Identifier.GetAllAsync())
+        return (await _dbContext.Identifier.GetAllAsync(cancellationToken))
             .Where(w => w.AccountGuid == request.AccountGuid)
             .Select(s => new IdentifierLiteResponse()
             {
