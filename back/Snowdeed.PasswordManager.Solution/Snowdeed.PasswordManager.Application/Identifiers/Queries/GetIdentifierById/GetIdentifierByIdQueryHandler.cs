@@ -1,22 +1,21 @@
 ﻿using MediatR;
-using Snowdeed.PasswordManager.Application.Commons.Securities;
 using Snowdeed.PasswordManager.Domain.Exceptions.Identifier;
 using Snowdeed.PasswordManager.Infrastructure;
 
 namespace Snowdeed.PasswordManager.Application.Identifiers.Queries.GetIdentifierById
 {
-    public class GetIdentifierByIdQueryHandler(PasswordManagerDbContext dbContext) : IRequestHandler<GetIdentifierByIdQuery, IdentifierResponse>
+    public class GetIdentifierByIdQueryHandler(PasswordManagerDbContext dbContext) : IRequestHandler<GetIdentifierByIdQuery, GetIdentifierByIdResponse>
     {
         private readonly PasswordManagerDbContext _dbContext = dbContext;
 
-        public async Task<IdentifierResponse> Handle(GetIdentifierByIdQuery request, CancellationToken cancellationToken)
+        public async Task<GetIdentifierByIdResponse> Handle(GetIdentifierByIdQuery request, CancellationToken cancellationToken)
         {
-            var identifier = await _dbContext.Identifier.GetAsync(request.Id);
+            var identifier = await _dbContext.Identifier.GetAsync(request.Id, cancellationToken);
 
             if (identifier is null)
                 throw new IdentifierNotFoundException(request.Id);
 
-            return new IdentifierResponse
+            return new GetIdentifierByIdResponse
             {
                 IdentifierGuid = identifier.IdentifierGuid,
                 Name = identifier.Name,

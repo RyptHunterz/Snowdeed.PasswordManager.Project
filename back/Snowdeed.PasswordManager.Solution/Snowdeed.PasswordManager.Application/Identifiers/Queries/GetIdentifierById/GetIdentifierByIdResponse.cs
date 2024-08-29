@@ -1,6 +1,6 @@
-﻿namespace Snowdeed.PasswordManager.Tests.Dtos;
+﻿namespace Snowdeed.PasswordManager.Application.Identifiers.Queries.GetIdentifierById;
 
-public class IdentifierDto
+public class GetIdentifierByIdResponse()
 {
     public Guid IdentifierGuid { get; set; }
     public required string Name { get; set; }

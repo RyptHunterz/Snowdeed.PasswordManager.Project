@@ -10,6 +10,7 @@ public static class MigrationExtensions
 
         var dbContext = scope.ServiceProvider.GetRequiredService<PasswordManagerDbContext>();
 
+        //await dbContext.DropDatabaseAsync();
         await dbContext.CreateDatabaseAsync();
         await dbContext.CreateTableAsync();
     }

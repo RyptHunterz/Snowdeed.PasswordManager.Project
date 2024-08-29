@@ -8,8 +8,11 @@ public class Identifier
     public int IdentifierId { get; protected set; }
     [PrimaryKey]
     public Guid IdentifierGuid { get; set; }
+    [MaxLenght(50)]
     public required string Name { get; set; }
+    [MaxLenght(50)]
     public string? Login { get; set; }
+    [MaxLenght(50)]
     public string? PasswordCrypt { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }

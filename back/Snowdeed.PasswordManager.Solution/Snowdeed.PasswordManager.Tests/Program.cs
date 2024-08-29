@@ -1,20 +1,48 @@
-﻿
-using Snowdeed.PasswordManager.Tests.Dtos;
-using Snowdeed.PasswordManager.Core.Commons.Securities;
+﻿using Snowdeed.PasswordManager.Tests;
+using Snowdeed.PasswordManager.Tests.Models;
 using System.Text;
 using System.Text.Json;
 
-Console.WriteLine("");
+HttpClient httpClient = new();
 
-//IdentifierDto dto = new()
+//CreateAccountModel createModel = new()
 //{
-//    Name = "Apple",
-//    Login = "stephane@ducoroy.be",
-//    PasswordCrypt = "tests".ToCrypt("$2y$10$YnzgF7iHF5/R3p/PzFDnrazer")
+//    AccountEmail = "stephane@ducoroy.be",
+//    Password = "p@159qLREZA",
+//    EmailContact = "stephane@ducoroy.be"
 //};
 
-//HttpClient httpClient = new();
-//var json = JsonSerializer.Serialize(dto);
-//var data = new StringContent(json, Encoding.UTF8, "application/json");
-//httpClient.PostAsync("http://localhost:5100/identifiers/", data);
+//var (hash, salt) = new PasswordHasher().Hash(createModel.Password);
 
+//createModel.PasswordHash = hash;
+//createModel.Salt = salt;
+
+//var json = JsonSerializer.Serialize(createModel);
+//var data = new StringContent(json, Encoding.UTF8, "application/json");
+//await httpClient.PostAsync("http://localhost:5100/account/", data);
+
+LoginAccountModel loginAccountModel = new()
+{
+    AccountEmail = "stephane@ducoroy.be",
+    Password = "p@159qLREZA",
+};
+
+var response = await httpClient.GetAsync($"http://localhost:5100/account/{loginAccountModel.AccountEmail}");
+
+if (response.IsSuccessStatusCode)
+{
+    string jsonContent = await response.Content.ReadAsStringAsync();
+    AccountModel? accountModel = JsonSerializer.Deserialize<AccountModel>(jsonContent);
+
+    if (accountModel != null)
+    {
+        var passwordHash = new PasswordHasher().Hash(loginAccountModel.Password, accountModel.Salt);
+
+        response = await httpClient.GetAsync($"http://localhost:5100/account/{loginAccountModel.AccountEmail}/{passwordHash}");
+        jsonContent = await response.Content.ReadAsStringAsync();
+
+        Console.WriteLine(jsonContent);
+    }
+}
+
+Console.ReadLine();

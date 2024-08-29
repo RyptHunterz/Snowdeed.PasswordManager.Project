@@ -2,7 +2,7 @@
 using Snowdeed.PasswordManager.Domain.Entities;
 using Snowdeed.PasswordManager.Infrastructure;
 
-namespace Snowdeed.PasswordManager.Application.Accounts.Commands;
+namespace Snowdeed.PasswordManager.Application.Accounts.Commands.CreateAccount;
 
 public class CreateAccountCommandHandler(PasswordManagerDbContext dbContext) : IRequestHandler<CreateAccountCommand>
 {
@@ -13,6 +13,7 @@ public class CreateAccountCommandHandler(PasswordManagerDbContext dbContext) : I
         var account = new Account()
         {
             AccountEmail = request.AccountEmail,
+            Salt = request.Salt,
             PasswordHash = request.PasswordHash,
             EmailContact = request.EmailContact
         };

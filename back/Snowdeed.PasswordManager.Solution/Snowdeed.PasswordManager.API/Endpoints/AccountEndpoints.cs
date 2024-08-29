@@ -1,8 +1,9 @@
 ﻿using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Snowdeed.PasswordManager.Application.Accounts.Commands;
-using Snowdeed.PasswordManager.Application.Identifiers.Commands.CreateIdentifier;
+using Snowdeed.PasswordManager.Application.Accounts.Commands.CreateAccount;
+using Snowdeed.PasswordManager.Application.Accounts.Queries.GetAccountByAccountEmail;
+using Snowdeed.PasswordManager.Application.Accounts.Queries.VerifyPasswordAccount;
 
 namespace Snowdeed.PasswordManager.API.Endpoints;
 
@@ -10,7 +11,7 @@ public static class AccountEndpoints
 {
     public static void MapAccountEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapPost("accounts/", async (CreateAccountCommand command, ISender sender, IValidator<CreateAccountCommand> validator, CancellationToken cancellationToken) =>
+        app.MapPost("account/", async (CreateAccountCommand command, ISender sender, IValidator<CreateAccountCommand> validator, CancellationToken cancellationToken) =>
         {
             var result = await validator.ValidateAsync(command, cancellationToken);
 
@@ -23,20 +24,15 @@ public static class AccountEndpoints
             return Results.Ok();
         });
 
-
-
-
-        //app.MapPost("/account/", async ([FromBody] AccountDto account, ISender sender, CancellationToken cancellationToken) =>
-        //{
-        //    var command = new Create
-
-        //    //return (await context.Account.GetAllAsync()).Any(w => w.AccountEmail == account.AccountEmail && w.PasswordHash == account.PasswordHash);
-        //});
-
-        app.MapGet("/accounts/{AccountGuid}", async ([FromBody] Guid AccountGuid, ISender sender, CancellationToken cancellationToken) =>
+        app.MapGet("/account/{AccountEmail}/{PasswordHash}", async ([FromRoute] string AccountEmail, [FromRoute] string PasswordHash, ISender sender, CancellationToken cancellationToken) =>
         {
+            return Results.Ok(await sender.Send(new VerifyPasswordAccountQuery(AccountEmail, PasswordHash), cancellationToken));
+        });
 
-            //return (await context.Account.GetAllAsync()).Where(w => w.AccountEmail == account.AccountEmail).FirstOrDefault();
+        app.MapGet("/account/{AccountEmail}", async ([FromRoute] string AccountEmail, ISender sender, CancellationToken cancellationToken) =>
+        {
+            var item = await sender.Send(new GetAccountByAccountEmailQuery(AccountEmail), cancellationToken);
+            return item is not null ? Results.Ok(item) : Results.NotFound();
         });
     }
 }
